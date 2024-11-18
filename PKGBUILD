@@ -8,9 +8,11 @@ pkgdesc="GPIB instrument support utilities latest from master branch"
 url="https://github.com/garlick/gpib-utils"
 arch=('x86_64' 'i686')
 license=('GPLv2')
-depends=('linux-gpib')
-source=("git://github.com/garlick/gpib-utils")
-sha1sums=('SKIP')
+depends=('linux-gpib' 'libtirpc')
+source=("git+https://github.com/garlick/gpib-utils.git"
+  0001-Fix-multiple-things-creating-warnings-also-remove-We.patch)
+sha1sums=('SKIP'
+  2c3073e15e725cf6a8685a1198d16a1d8473e51b)
 provides=('gpib-utils')
 conflicts=('gpib-utils')
 
@@ -21,8 +23,9 @@ pkgver() {
 
 prepare() {
   cd "${srcdir}/${_gitname}"
+  patch -p1 <"../0001-Fix-multiple-things-creating-warnings-also-remove-We.patch"
   ./autogen.sh
-  ./configure --prefix=${pkgdir}/usr
+  ./configure --prefix=${pkgdir}/usr CPPFLAGS="-I/usr/include/tirpc" LDFLAGS="-ltirpc"
 }
 
 build() {
